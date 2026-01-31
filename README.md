@@ -91,7 +91,7 @@ Pastikan server Anda memenuhi syarat berikut:
 Clone repositori atau ekstrak file ke web server (htdocs/www).
 
 ```bash
-git clone [https://github.com/dani-techno/script-market.git](https://github.com/dani-techno/script-market.git)
+git clone https://github.com/dani-techno/script-market.git
 cd flowix-checkout
 
 ```
@@ -104,7 +104,7 @@ Buka file `config.php` dan sesuaikan dengan data dari dashboard Flowix/Atlantic 
 // config.php
 return [
     'api' => [
-        'base_url'    => '[https://flowix.web.id](https://flowix.web.id)', //
+        'base_url'    => 'https://flowix.web.id, //
         'api_key'     => 'sk-xxxx-xxxx',          // API Key Rahasia Anda
         'merchant_id' => 'MID-DANxxxx',           //
     ],
@@ -162,7 +162,7 @@ Sebagai **Senior Engineer**, berikut adalah catatan penting untuk *deployment* k
 Project ini dikembangkan dengan standar tinggi untuk kebersihan kode dan performa.
 
 * **Core Developer:** Dani Joest (Full-Stack Software Engineer)
-* **Integrasi Payment:** Flowix / Atlantic H2H
+* **Integrasi Payment:** Flowix Technology
 * **Kontak Support:**
 * WhatsApp: +62 823-2066-7363
 * Email: dani.joest.id@gmail.com

@@ -1,0 +1,14 @@
+Security Reporting Policy
+
+PT INOVIXA TECHNOLOGIES SOLUTION berkomitmen menjaga keamanan dan integritas seluruh produk serta layanan yang kami sediakan. Jika Anda menemukan potensi kerentanan, kelemahan, atau masalah keamanan dalam sistem, aplikasi, atau layanan kami, mohon segera melaporkannya melalui saluran resmi berikut:
+
+Email: inovixa.technologies.solution@gmail.com
+
+Kami menekankan prinsip responsible disclosure, di mana semua laporan keamanan yang sah akan:
+1. Ditangani secara rahasia dan profesional.
+2. Ditindaklanjuti dengan evaluasi menyeluruh dan perbaikan secepat mungkin.
+3. Dihargai sesuai kebijakan perusahaan, termasuk kemungkinan pengakuan resmi atau penghargaan bagi pelapor yang membantu meningkatkan keamanan.
+
+Harap diperhatikan bahwa laporan yang tidak relevan, bersifat destruktif, atau mencoba mengeksploitasi sistem tidak akan diterima dan dapat berakibat pada tindakan hukum.
+
+Dengan mencantumkan kebijakan ini, PT INOVIXA TECHNOLOGIES SOLUTION memastikan lingkungan digital yang aman, profesional, dan terpercaya bagi semua pengguna dan mitra bisnis.

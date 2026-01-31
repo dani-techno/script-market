@@ -1,0 +1,27 @@
+EULA (End User License Agreement) – PT INOVIXA TECHNOLOGIES SOLUTION
+
+Perjanjian Lisensi Pengguna Akhir ini ("EULA") merupakan kesepakatan hukum antara Anda ("Pengguna") dan PT INOVIXA TECHNOLOGIES SOLUTION ("Perusahaan") terkait penggunaan perangkat lunak, aplikasi, dan/atau layanan yang disediakan oleh Perusahaan.
+
+1. Lisensi
+Perusahaan memberikan kepada Pengguna lisensi non-eksklusif, tidak dapat dipindahtangankan, dan terbatas untuk menggunakan perangkat lunak sesuai ketentuan dalam EULA ini.
+
+2. Hak dan Kewajiban Pengguna
+a. Pengguna dilarang menyalin, mendistribusikan, menjual, menyewakan, atau membuat karya turunan dari perangkat lunak tanpa izin tertulis dari Perusahaan.  
+b. Pengguna wajib menggunakan perangkat lunak sesuai dengan hukum yang berlaku dan tidak menyalahgunakan perangkat lunak untuk kegiatan ilegal.  
+c. Pengguna bertanggung jawab atas keamanan perangkat yang digunakan untuk mengakses perangkat lunak.
+
+3. Pembatasan Tanggung Jawab
+Perusahaan tidak bertanggung jawab atas kerugian langsung, tidak langsung, atau konsekuensial yang timbul akibat penggunaan perangkat lunak, termasuk tetapi tidak terbatas pada kehilangan data atau gangguan operasional.
+
+4. Pemutusan Lisensi
+Perusahaan berhak menghentikan lisensi dan akses Pengguna jika Pengguna melanggar ketentuan EULA ini atau peraturan hukum yang berlaku.
+
+5. Perubahan
+Perusahaan dapat mengubah ketentuan EULA ini dari waktu ke waktu. Pengguna disarankan untuk meninjau EULA secara berkala. Penggunaan berkelanjutan atas perangkat lunak dianggap sebagai penerimaan terhadap perubahan tersebut.
+
+6. Hukum yang Berlaku
+EULA ini diatur oleh hukum Republik Indonesia. Sengketa yang timbul sehubungan dengan EULA ini akan diselesaikan melalui jalur hukum di wilayah hukum Indonesia.
+
+Dengan menggunakan perangkat lunak atau layanan ini, Pengguna menyatakan telah membaca, memahami, dan menyetujui semua ketentuan dalam EULA ini.
+
+PT INOVIXA TECHNOLOGIES SOLUTION
