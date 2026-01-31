@@ -1,0 +1,22 @@
+# Konfigurasi
+config.php - File konfigurasi utama yang berisi pengaturan API dan produk.
+
+# Assets
+https://forestapi.web.id/qr/b7c88Gn9otHRlj61thT3 - Contoh QR Code  
+https://forestapi.web.id/home/images/project-wa-bot-topup.jpg - Contoh Thumbnail Produk  
+
+# Framework & Library
+https://cdn.tailwindcss.com - CDN untuk Tailwind CSS, digunakan untuk styling halaman.  
+https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css - CDN untuk Font Awesome, digunakan untuk ikon.  
+https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap - Google Fonts untuk font "Inter".  
+
+# API & Endpoints
+https://forestapi.web.id/api-documentation - Dokumentasi API untuk referensi lebih lanjut.  
+
+/endpoint:  
+/deposit/create - Membuat pembayaran baru.  
+/deposit/status - Mengecek status pembayaran.  
+/deposit/cancel - Membatalkan pembayaran.  
+
+# File Backend
+download.php - Skrip backend untuk menangani proses pengunduhan file setelah pembayaran berhasil.

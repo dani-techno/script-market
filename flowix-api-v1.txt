@@ -1,0 +1,808 @@
+
+Logo
+FlowixAPI
+
+dani.joest
+Navigation
+
+Getting Started
+Overview
+Authentication
+Account
+Get Account
+Deposit
+Get Methods
+Create Deposit
+Status Deposit
+Cancel Deposit
+Services
+List Services
+Prepaid (Prabayar)
+Create Transaction
+Check Status
+Postpaid (Pascabayar)
+Inquiry Bill
+Pay Bill
+Disbursement
+Bank List
+Account Inquiry
+Send Money
+Check Status
+Webhook Integration (Callbacks)
+Webhook Guide
+Webhook Resend
+Flowix API Reference
+Selamat datang di dokumentasi resmi Flowix API v1. Integrasikan layanan Pulsa, PPOB, Deposit Otomatis, dan Pencairan Dana (Payout) ke dalam aplikasi Anda dengan API RESTful kami yang cepat, aman, dan dapat diandalkan.
+
+Base URL
+https://flowix.web.id/api/v1
+Content Type
+application/json
+Autentikasi
+Keamanan API kami menggunakan kombinasi API Key (Rahasia) dan Merchant ID (Identitas Bisnis). Kedua parameter ini WAJIB disertakan dalam setiap request.
+
+Anda dapat mengirimkan kredensial ini melalui 3 metode:
+
+Header (Rekomendasi - Paling Aman)
+Body (JSON Payload)
+Query Parameter (URL)
+ PENTING: Jangan pernah membagikan API Key Anda di sisi client (Frontend/Mobile App). Gunakan hanya di sisi server (Backend).
+
+Header
+Body (JSON)
+Query
+
+curl -X GET "https://flowix.web.id/api/v1/account" \
+-H "Content-Type: application/json" \
+-H "api_key: sk-xxxx-xxxx-xxxx" \
+-H "merchant_id: MID-xxxx"
+GET
+account info
+https://flowix.web.id/api/v1/account
+Mengambil informasi detail akun, saldo, dan status.
+
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X GET 'https://flowix.web.id/api/v1/account' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' 
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Account details retrieved successfully.",
+  "data": {
+    "username": "demo_user",
+    "email": "user@example.com",
+    "phone": "6281234567890",
+    "level": "Enterprise",
+    "balance": 5500000,
+    "balance_limit": 1000000000,
+    "currency": "IDR",
+    "status": "active",
+    "kyc": "verified",
+    "kyc_level": "CORP_STD",
+    "verified": true,
+    "security_2fa": true,
+    "ip_whitelist": [
+      "10.0.0.1"
+    ],
+    "joined_at": "2023-01-01 12:00:00",
+    "last_active": "2023-10-25 14:00:00"
+  },
+  "meta": {
+    "timestamp": "2023-10-25 14:05:00",
+    "api_version": "1.0.0",
+    "method": "GET",
+    "ip": "127.0.0.1"
+  }
+}
+GET
+deposit methods
+https://flowix.web.id/api/v1/deposit/methods
+Mengambil daftar metode deposit yang aktif (Bank, E-Wallet, QRIS).
+
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X GET 'https://flowix.web.id/api/v1/deposit/methods' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' 
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Deposit methods retrieved.",
+  "data": [
+    {
+      "code": "QRIS",
+      "name": "QRIS (All Payment)",
+      "type": "qris",
+      "min_amount": 1000,
+      "max_amount": 5000000,
+      "fee": 700,
+      "fee_percent": 0.7,
+      "image": "https://cdn.atlantich2h.com/bank/qris.png"
+    },
+    {
+      "code": "QRISFAST",
+      "name": "QRIS Fast",
+      "type": "qris",
+      "min_amount": 1000,
+      "max_amount": 2000000,
+      "fee": 0,
+      "fee_percent": 0.5,
+      "image": "https://cdn.atlantich2h.com/bank/qris.png"
+    }
+  ],
+  "meta": {
+    "timestamp": "2023-10-25 14:10:00",
+    "api_version": "1.0.0",
+    "method": "GET",
+    "ip": "127.0.0.1"
+  }
+}
+POST
+deposit create
+https://flowix.web.id/api/v1/deposit/create
+Membuat tiket deposit saldo. Sistem akan mengembalikan data pembayaran (VA, QR Image, atau Rekening).
+
+Parameters
+Field	Type	Required	Description
+amount	int	REQ	Nominal deposit yang diinginkan.
+method_code	string	REQ	Kode metode (didapat dari endpoint Methods).
+fee_by_customer	boolean	OPT	Jika `true`, tagihan dinaikkan (Gross Up). Jika `false`, fee potong saldo.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/deposit/create' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "amount": 50000,
+  "method_code": "QRISFAST",
+  "fee_by_customer": true
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Deposit created successfully.",
+  "data": {
+    "ref_id": "DEP-API-231025-X8Y9Z0",
+    "amount_request": 50000,
+    "amount_total": 50700,
+    "amount_received": 50000,
+    "fee_charged": 700,
+    "expired_at": "2023-10-25 15:30:00",
+    "payment_data": {
+      "qr": {
+        "image": "https://qris.example.com/image.png",
+        "string": "00020101021226590014..."
+      },
+      "pay_url": null,
+      "va_number": null,
+      "bank_account": null,
+      "bank_name": null,
+      "account_name": null
+    }
+  },
+  "meta": {
+    "timestamp": "2023-10-25 14:30:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
+GET / POST
+deposit status
+https://flowix.web.id/api/v1/deposit/status
+Digunakan untuk mengecek status transaksi deposit berdasarkan reference ID.
+
+Parameters
+Field	Type	Required	Description
+ref_id	string	REQ	ID Unik dari sistem Anda.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/deposit' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "ref_id": "DEP-1738221650"
+  
+}'
+Example Response
+
+200 OK
+{
+    "success": true,
+    "message": "Deposit status retrieved successfully.",
+    "data": {
+        "ref_id": "DEP-1738221650",
+        "method": "QRIS",
+        "type": "ewallet",
+        "amount_billing": 50000,
+        "amount_received": 49650,
+        "fee": 350,
+        "status": "pending",
+        "payment_details": {
+            "va_number": null,
+            "bank_name": null,
+            "pay_url": "https://checkout.flowix.id/pay/xxx",
+            "qr_string": "0002010102112667001..."
+        },
+        "created_at": "2026-01-30 07:42:01",
+        "expired_at": "2026-01-30 08:42:01",
+        "paid_at": null
+    }
+}
+POST
+deposit cancel
+https://flowix.web.id/api/v1/deposit/cancel
+Membatalkan permintaan deposit yang masih berstatus pending.
+
+Parameters
+Field	Type	Required	Description
+ref_id	string	REQ	ID Deposit (DEP-...) yang ingin dibatalkan.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/deposit/cancel' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "ref_id": "DEP-API-231025-X8Y9Z0"
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Deposit canceled.",
+  "data": null,
+  "meta": {
+    "timestamp": "2023-10-25 14:35:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
+GET / POST
+services list
+https://flowix.web.id/api/v1/services?type=prabayar
+Mendapatkan daftar layanan aktif beserta harga terbaru.
+
+Parameters
+Field	Type	Required	Description
+type	string	OPT	`prabayar` (default) atau `pascabayar`.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/services' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "type": "prabayar"
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Service list (prabayar) retrieved.",
+  "data": [
+    {
+      "code": "TSEL10",
+      "name": "Telkomsel 10k",
+      "category": "Pulsa",
+      "brand": "Telkomsel",
+      "type": "pulsa",
+      "price": 10500,
+      "status": "available"
+    },
+    {
+      "code": "ML5",
+      "name": "Mobile Legends 5 Diamond",
+      "category": "Games",
+      "brand": "Mobile Legends",
+      "type": "game",
+      "price": 1500,
+      "status": "available"
+    }
+  ],
+  "meta": {
+    "timestamp": "2023-10-25 14:40:00",
+    "api_version": "1.0.0",
+    "method": "GET",
+    "ip": "127.0.0.1"
+  }
+}
+POST
+trx create
+https://flowix.web.id/api/v1/transaction/create
+Melakukan pembelian produk prabayar. Saldo akan terpotong otomatis.
+
+Parameters
+Field	Type	Required	Description
+service_code	string	REQ	Kode produk dari endpoint Services.
+target	string	REQ	Nomor tujuan / ID Pelanggan.
+ref_id	string	REQ	ID Unik dari sistem Anda (Idempotency).
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/transaction/create' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "service_code": "TSEL10",
+  "target": "081234567890",
+  "ref_id": "TRX-ORDER-001"
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Transaction processing.",
+  "data": {
+    "trx_id": 105,
+    "ref_id": "TRX-ORDER-001",
+    "status": "processing",
+    "price": 10500,
+    "sn": ""
+  },
+  "meta": {
+    "timestamp": "2023-10-25 14:45:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
+GET / POST
+trx status
+https://flowix.web.id/api/v1/transaction/status
+Digunakan untuk mengecek status transaksi (Prepaid/Game/PPOB) berdasarkan reference ID.
+
+Parameters
+Field	Type	Required	Description
+ref_id	string	REQ	ID Unik dari sistem Anda.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/transaction' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "ref_id": "TRX-ORDER-001"
+  
+}'
+Example Response
+
+200 OK
+{
+    "success": true,
+    "message": "Transaction status retrieved successfully.",
+    "data": {
+        "ref_id": "TRX-ORDER-001",
+        "product": "Telkomsel 10k",
+        "target": "081234567890",
+        "price": 10500,
+        "status": "success",
+        "sn": "1234567890123456",
+        "note": "Transaksi Berhasil",
+        "created_at": "2023-10-25 14:46:00"
+    }
+}
+POST
+bill check
+https://flowix.web.id/api/v1/bill/check
+Cek tagihan pascabayar (PLN, BPJS, PDAM). Anda akan mendapat `inquiry_id`.
+
+Parameters
+Field	Type	Required	Description
+service_code	string	REQ	Kode produk pascabayar.
+customer_no	string	REQ	Nomor pelanggan.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/bill/check' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "service_code": "PLNPOST",
+  "customer_no": "512345678901"
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Bill inquiry successful.",
+  "data": {
+    "inquiry_id": "INQ-170...",
+    "customer_name": "BUDI SANTOSO",
+    "customer_no": "512345678901",
+    "period": "2023-10",
+    "admin_fee": 2500,
+    "bill_amount": 54500,
+    "detail": { ... }
+  },
+  "meta": {
+    "timestamp": "2023-10-25 15:00:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
+POST
+bill pay
+https://flowix.web.id/api/v1/bill/pay
+Melakukan pembayaran tagihan berdasarkan `inquiry_id`.
+
+Parameters
+Field	Type	Required	Description
+service_code	string	REQ	Kode produk.
+customer_no	string	REQ	Nomor pelanggan.
+inquiry_id	string	REQ	Dapat dari respon `/bill/check`.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/bill/pay' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "service_code": "PLNPOST",
+  "customer_no": "512345678901",
+  "inquiry_id": "INQ-170..."
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Bill payment processing.",
+  "data": {
+    "trx_id": 202,
+    "ref_id": "INQ-170...",
+    "status": "processing",
+    "sn": "STRUM/TOKEN/REF"
+  },
+  "meta": {
+    "timestamp": "2023-10-25 15:01:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
+GET
+payout banks
+https://flowix.web.id/api/v1/payout/banks
+Mendapatkan daftar bank yang didukung untuk pencairan dana.
+
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X GET 'https://flowix.web.id/api/v1/payout/banks' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' 
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Bank list retrieved.",
+  "data": [
+    {
+      "code": "BCA",
+      "name": "BANK CENTRAL ASIA",
+      "type": "bank"
+    },
+    {
+      "code": "DANA",
+      "name": "DANA",
+      "type": "ewallet"
+    }
+  ],
+  "meta": {
+    "timestamp": "2023-10-25 15:10:00",
+    "api_version": "1.0.0",
+    "method": "GET",
+    "ip": "127.0.0.1"
+  }
+}
+POST
+payout inquiry
+https://flowix.web.id/api/v1/payout/inquiry
+Validasi nomor rekening tujuan sebelum transfer.
+
+Parameters
+Field	Type	Required	Description
+bank_code	string	REQ	Kode bank tujuan.
+account_number	string	REQ	Nomor rekening.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/payout/inquiry' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "bank_code": "BCA",
+  "account_number": "1234567890"
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Account valid.",
+  "data": {
+    "account_name": "DANI JOEST",
+    "account_number": "1234567890",
+    "bank_code": "BCA"
+  },
+  "meta": {
+    "timestamp": "2023-10-25 15:15:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
+POST
+payout create
+https://flowix.web.id/api/v1/payout/create
+Mengirim uang ke rekening bank/E-Wallet.
+
+Parameters
+Field	Type	Required	Description
+bank_code	string	REQ	Kode bank.
+account_number	string	REQ	Nomor rekening.
+account_name	string	OPT	Nama pemilik (untuk validasi).
+amount	int	REQ	Nominal (Min. 10.000).
+ref_id	string	REQ	ID Unik dari sistem Anda.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/payout/create' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "bank_code": "BCA",
+  "account_number": "1234567890",
+  "account_name": "DANI JOEST",
+  "amount": 50000,
+  "ref_id": "WD-001"
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Payout request accepted.",
+  "data": {
+    "ref_id": "WD-001",
+    "status": "processing"
+  },
+  "meta": {
+    "timestamp": "2023-10-25 15:20:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
+GET / POST
+payout status
+https://flowix.web.id/api/v1/payout/status
+Digunakan untuk mengecek status transaksi penarikan dana (payout) berdasarkan reference ID.
+
+Parameters
+Field	Type	Required	Description
+ref_id	string	REQ	ID Unik dari sistem Anda.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/payout' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "ref_id": "WD-9921034"
+  
+}'
+Example Response
+
+200 OK
+{
+    "success": true,
+    "message": "Payout status retrieved successfully.",
+    "data": {
+        "ref_id": "WD-9921034",
+        "method": "BCA",
+        "bank_name": "BANK CENTRAL ASIA",
+        "account_number": "1234567890",
+        "account_name": "JOHN DOE",
+        "amount": 100000,
+        "fee": 2500,
+        "total_deduction": 102500,
+        "status": "success",
+        "note": "Transfer Berhasil",
+        "created_at": "2026-01-30 06:15:20"
+    }
+}
+Webhook Integration (Callbacks)
+Flowix akan mengirimkan notifikasi HTTP POST (Callback) ke Webhook URL Anda setiap kali ada perubahan status transaksi (Sukses/Gagal). Ini memastikan sistem Anda selalu sinkron tanpa perlu melakukan polling terus-menerus.
+
+Security Verification
+Setiap request webhook dilengkapi dengan header keamanan. Anda WAJIB memverifikasi signature untuk memastikan request berasal dari Flowix, bukan dari penipu.
+
+1. Webhook Headers
+Header Name	Description
+X-Flowix-Signature	HMAC-SHA256 Hex Digest dari payload body + Webhook Secret Anda.
+X-Flowix-Key	API Key Production Anda (untuk verifikasi identitas pengirim).
+X-Flowix-Merchant	Merchant ID Anda.
+X-Flowix-Event	Tipe event, misal: transaction.status, deposit.status.
+2. Payload Structure
+{
+  "id": "evt_d39a3e...",
+  "event": "transaction.status",
+  "timestamp": 1698223000,
+  "data": {
+    "reff_id": "TRX-12345",
+    "product": "TSEL10",
+    "target": "081234567890",
+    "status": "success",
+    "sn": "000123000",
+    "note": "Transaksi Berhasil"
+  }
+}
+3. Verifying Signature (Example)
+Node.js (Express)
+const crypto = require('crypto');
+app.post('/webhook/flowix', (req, res) => {
+    const secret = 'whsec_YOUR_SECRET'; // Dari Dashboard Akun
+    const signature = req.headers['x-flowix-signature'];
+    const payload = JSON.stringify(req.body);
+
+    // Generate Signature Local
+    const expectedSignature = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('hex');
+
+    if (signature !== expectedSignature) {
+        return res.status(403).json({ error: 'Invalid Signature' });
+    }
+
+    // Process Event
+    const { event, data } = req.body;
+    console.log(`Received event: ${event}`, data);
+
+    res.json({ received: true });
+});
+POST
+webhook resend
+https://flowix.web.id/api/v1/webhook/resend
+Memicu ulang (Replay) pengiriman webhook untuk transaksi tertentu. Berguna jika server Anda sempat down.
+
+Parameters
+Field	Type	Required	Description
+ref_id	string	REQ	ID Transaksi (TRX/DEP/WD) yang ingin dikirim ulang.
+cURL
+Node
+Fetch
+PHP
+Python
+Go
+
+curl -X POST 'https://flowix.web.id/api/v1/webhook/resend' \
+-H 'Content-Type: application/json' \
+-H 'api_key: sk-123456' \
+-H 'merchant_id: MID-123456' \
+-d '{
+  "ref_id": "TRX-ORDER-001"
+  
+}'
+Example Response
+
+200 OK
+{
+  "success": true,
+  "code": 200,
+  "message": "Webhook transaction sent successfully.",
+  "data": null,
+  "meta": {
+    "timestamp": "2023-10-25 16:00:00",
+    "api_version": "1.0.0",
+    "method": "POST",
+    "ip": "127.0.0.1"
+  }
+}
