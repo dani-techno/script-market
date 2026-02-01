@@ -1,5 +1,5 @@
 <?php
-/**
+/*
 ================================================================================
           PERINGATAN HAK CIPTA DAN PERJANJIAN LISENSI KOMERSIAL
 ================================================================================
@@ -94,7 +94,7 @@ PELANGGARAN AKAN DITINDAK TEGAS TANPA TOLERANSI.
 
 PT INOVIXA TECHNOLOGIES SOLUTION
 Est. 2026
-*/
+**/
 
 header('Content-Type: application/json');
 $config = require 'config.php';
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $action = $_GET['action'] ?? '';
 
-// Setup Headers Flowix [cite: 4, 6]
+// Setup Headers Flowix
 $headers = [
     "Content-Type: application/json",
     "api_key: " . $config['api']['api_key'],
@@ -121,7 +121,7 @@ $response = [];
 
 switch ($action) {
     case 'create_payment':
-        // Endpoint: POST /deposit/create [cite: 10]
+        // Endpoint: POST /deposit/create
         $url = $config['api']['base_url'] . '/api/v1/deposit/create';
         
         // Generate Reff ID unik
@@ -177,25 +177,66 @@ switch ($action) {
 echo $response;
 
 /**
- * Fungsi Helper cURL
+ * Fungsi Helper Request Tanpa cURL (Native PHP Stream)
+ * Kompatibel: Windows, Linux, Termux (Tanpa perlu edit php.ini)
  */
 function curlRequest($url, $headers, $body) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    
-    // Non-aktifkan SSL verify untuk development local jika perlu (opsional)
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    
-    $result = curl_exec($ch);
-    
-    if (curl_errno($ch)) {
-        return json_encode(['success' => false, 'message' => 'Curl Error: ' . curl_error($ch)]);
+    // 1. Konversi Header Format cURL ke Format Stream Context
+    // cURL pakai array ['Key: Value'], Stream butuh string "Key: Value\r\n"
+    $headerString = "";
+    foreach ($headers as $header) {
+        $headerString .= $header . "\r\n";
     }
+    // Tambah User-Agent agar tidak diblokir server/WAF
+    $headerString .= "User-Agent: Flowix-Client/1.0 (Non-cURL)\r\n";
+
+    // 2. Setup Opsi Stream (Mirip curl_setopt)
+    $options = [
+        'http' => [
+            'method'  => 'POST',
+            'header'  => $headerString,
+            'content' => json_encode($body),
+            'timeout' => 30, // Timeout 30 detik
+            'ignore_errors' => true // Tetap ambil body meski status 4xx/5xx
+        ],
+        "ssl" => [
+            // Matikan verifikasi SSL (Setara CURLOPT_SSL_VERIFYPEER = false)
+            // Solusi untuk error sertifikat di local environment
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ]
+    ];
+
+    // 3. Eksekusi Request
+    $context  = stream_context_create($options);
     
-    curl_close($ch);
+    // Suppress warning (@) agar error ditangkap logic kita sendiri
+    $result = @file_get_contents($url, false, $context);
+
+    // 4. Error Handling
+    if ($result === FALSE) {
+        $error = error_get_last();
+        return json_encode([
+            'success' => false, 
+            'message' => 'Connection Error: ' . ($error['message'] ?? 'Unknown Error'),
+            'debug_hint' => 'Pastikan allow_url_fopen aktif (default: on)'
+        ]);
+    }
+
+    // 5. Cek HTTP Response Header (Variabel global $http_response_header otomatis terisi)
+    // Format baris pertama biasanya "HTTP/1.1 200 OK"
+    if (isset($http_response_header[0])) {
+        preg_match('#HTTP/\S+\s(\d{3})#', $http_response_header[0], $matches);
+        $statusCode = isset($matches[1]) ? (int)$matches[1] : 500;
+
+        if ($statusCode >= 400) {
+            return json_encode([
+                'success' => false,
+                'message' => "HTTP Request Failed. Status Code: {$statusCode}",
+                'raw_response' => $result
+            ]);
+        }
+    }
+
     return $result;
 }

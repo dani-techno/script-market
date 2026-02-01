@@ -92,7 +92,7 @@ Clone repositori atau ekstrak file ke web server (htdocs/www).
 
 ```bash
 git clone https://github.com/dani-techno/script-market.git
-cd flowix-checkout
+cd script-market
 
 ```
 
